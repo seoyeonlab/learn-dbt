@@ -1,0 +1,29 @@
+version: 2
+
+sources:
+  - name: dvdrental
+    schema: dvdrental
+    description: "Raw dvdrental database tables"
+
+    tables:
+      - name: customer
+        description: "Customer information"
+  
+      - name: rental
+        description: "Rental transactions"
+
+      - name: payment
+        description: "Payment records"
+        loaded_at_field: payment_date
+        freshness:
+          warn_after: {count: 9125, period: day}
+          error_after: {count: 10950, period: day}
+
+      - name: inventory
+        description: "Inventory of films"
+
+      - name: film
+        description: "Film details"
+
+      - name: address
+        description: "Customer addresses"
