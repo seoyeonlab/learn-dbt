@@ -1,0 +1,12 @@
+learn_dbt:
+  outputs:
+    dev:
+      dbname: dvdrental
+      host: localhost
+      pass: mypassword
+      port: 5432
+      schema: dvdrental
+      threads: 1
+      type: postgres
+      user: postgres
+  target: dev
