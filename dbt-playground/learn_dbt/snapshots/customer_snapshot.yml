@@ -1,0 +1,9 @@
+version: 2
+
+snapshots:
+  - name: customer_snapshot
+    relation: ref('stg_customer')
+    config:
+      unique_key: customer_id
+      strategy: timestamp
+      updated_at: last_update

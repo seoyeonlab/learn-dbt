@@ -1,0 +1,16 @@
+version: 2
+
+snapshots:
+  - name: address_snapshot
+    relation: ref('stg_address')
+    config:
+      unique_key: address_id
+      strategy: check
+
+      check_cols:
+        - address
+        - address2
+        - district
+        - city_id
+        - postal_code
+        - phone
