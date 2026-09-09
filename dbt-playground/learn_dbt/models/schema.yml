@@ -1,0 +1,133 @@
+version: 2
+
+models:
+  # -------------------------
+  # STAGING
+  # -------------------------
+  - name: stg_customer
+    description: "Cleaned customer records from dvdrental.customer."
+    columns:
+      - name: customer_id
+        description: "Primary key from dvdrental.customer."
+        tests:
+          - not_null
+          - unique
+      - name: store_id
+        tests: [not_null]
+      - name: email
+        description: "Customer email (may be null/blank in some datasets)."
+      - name: is_active
+        description: "Whether the customer is True or False"
+        tests:
+          - accepted_values:
+              values: [False, True]
+
+  - name: stg_rental
+    description: "Cleaned rental records from dvdrental.rental."  
+    columns:
+      - name: rental_id
+        tests: [not_null, unique]
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_customer')
+                field: customer_id
+
+  - name: stg_payment
+    description: "Cleaned payment records from dvdrental.payment."
+    columns:
+      - name: payment_id
+        tests: [not_null, unique]
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_customer')
+                field: customer_id
+      - name: rental_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_rental')
+                field: rental_id
+
+  - name: stg_inventory
+    description: "Cleaned inventory records from dvdrental.inventory."
+    columns:
+      - name: inventory_id
+        tests: [not_null, unique]
+      - name: film_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_film')
+                field: film_id
+
+
+  # -------------------------
+  # INTERMEDIATE
+  # -------------------------
+  - name: int_rentals_enriched
+    description: "Rentals enriched with film + store + aggregated payment amount per rental."
+    columns:
+      - name: rental_id
+        tests: [not_null, unique]
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_customer')
+                field: customer_id
+      - name: film_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_film')
+                field: film_id
+
+  # -------------------------
+  # MARTS
+  # -------------------------
+  - name: dim_customer
+    description: "Customer dimension (surrogate key + cleaned attributes)."
+    columns:
+      - name: customer_sk
+        tests: [not_null, unique]
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_film
+    description: "Film dimension (surrogate key + attributes)."
+    columns:
+      - name: film_sk
+        tests: [not_null, unique]
+      - name: film_id
+        tests:
+          - not_null
+          - unique
+
+  - name: fct_payments
+    description: "{{ doc('fct_payments_doc') }}"
+    columns:
+      - name: customer_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_sk
+      - name: film_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_film')
+                field: film_sk
