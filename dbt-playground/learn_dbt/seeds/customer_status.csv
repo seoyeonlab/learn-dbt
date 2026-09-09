@@ -1,0 +1,4 @@
+status_code,status_name,description
+A,Active,Customer has rented within the last 30 days
+I,Inactive,Customer has not rented recently
+B,Banned,Customer is blocked

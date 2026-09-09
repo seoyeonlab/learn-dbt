@@ -1,0 +1,14 @@
+version: 2
+
+seeds:
+  - name: customer_status
+    description: "Lookup table for customer status"
+    columns:
+      - name: status_code
+        description: "Short status code"
+
+      - name: status_name
+        description: "Human-readable status"
+
+      - name: description
+        description: "Detailed explanation"
